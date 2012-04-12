@@ -47,11 +47,10 @@ p.CharacterDataHandler = char_data
 
 parsed_data = p.Parse(r, 1)
 
-print type(parsed_data)
 
-for key, value in parsed_data:
-    if key == 'Character Data':
-        parsed_data['Character Data'] = unescape(value)
+#for key, value in parsed_data:
+#    if key == 'Character Data':
+#        parsed_data['Character Data'] = unescape(value)
 
-print parsed_data
+
 
