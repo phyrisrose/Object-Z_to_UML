@@ -20,6 +20,20 @@ class XMLParser(object):
         dom = xml.dom.minidom.parseString(open(in_file).read())
         self.handleTOZE(dom)
 
+    def asciiConv(self, name):
+        asc_name = list(name)
+        ascii = ""
+        type_name = ""
+        for char in asc_name:
+            if char != "&" and char != "#":
+                ascii = ascii + char
+            if char == '&' and ascii != "":
+                type_name += chr(int(ascii))
+                new_char = ""
+                ascii = ""
+        type_name += chr(int(ascii))
+        return type_name
+
     def getCDATA(self, nodelist):
         rc = []
         for node in nodelist:
@@ -30,6 +44,9 @@ class XMLParser(object):
     def handleTOZE(self, TOZE):
         self.handleFreeTypeDef(TOZE.getElementsByTagName('freeTypeDef'))
         self.handleBasicTypeDefs(TOZE.getElementsByTagName('basicTypeDef'))
+        #for blah in TOZE.getElementsByTagName('classDef'):
+        #    for blah2 in blah.getElementsByTagName('operation'):
+        #        print blah2.getElementsByTagName('declaration')
         self.handleClassDef(TOZE.getElementsByTagName('classDef')[0])
 
     def handleBasicTypeDefs(self, basicTypeDefs):
@@ -40,12 +57,13 @@ class XMLParser(object):
             # for now, the gnarly string is the name of the object
             btd.name = self.handleName(typeDef.getElementsByTagName('name')[0])
             btd.type = 'basicTypeDef'
+            btd.name = self.asciiConv(btd.name)
             logging.info('New %s' % btd)
             self.generated.append(btd)
 
     # TODO: Figure out how to ignore tags that aren't used in the file being parsed.
     def handleFreeTypeDef(self, freeTypeDef):
-        logging.info("should break here, freeTypeDef is undefined in the current doc")
+        pass
 
     def handleClassDef(self, classDef):
         cls = BasicClass()
@@ -57,6 +75,7 @@ class XMLParser(object):
         ftns_to_append = self.handleOperations(classDef.getElementsByTagName('operation'))
         cls.functions.append(ftns_to_append)
         # by this point, the class entity should be complete
+        cls.name = self.asciiConv(cls.name)
         logging.info("New %s" % cls)
         self.generated.append(cls)
 
@@ -89,6 +108,7 @@ class XMLParser(object):
         # assume the previous functions gathered some data, now we
         # ftn.append_some_attributes_to_the_object
         # and pass it up to handleOperations()
+        ftn.name = self.asciiConv(ftn.name)
         logging.info('New Function %s' % ftn.name)
         return ftn
 
