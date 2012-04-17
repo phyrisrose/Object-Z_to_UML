@@ -42,28 +42,42 @@ class XMLParser(object):
         return ''.join(rc)
 
     def handleTOZE(self, TOZE):
-        self.handleFreeTypeDef(TOZE.getElementsByTagName('freeTypeDef'))
-        self.handleBasicTypeDefs(TOZE.getElementsByTagName('basicTypeDef'))
-        #for blah in TOZE.getElementsByTagName('classDef'):
-        #    for blah2 in blah.getElementsByTagName('operation'):
-        #        print blah2.getElementsByTagName('declaration')
-        self.handleClassDef(TOZE.getElementsByTagName('classDef')[0])
+        if TOZE:
+            self.handleFreeTypeDef(TOZE.getElementsByTagName('freeTypeDef'))
+            self.handleBasicTypeDefs(TOZE.getElementsByTagName('basicTypeDef'))
+            self.handleClassDefs(TOZE.getElementsByTagName('classDef'))
+        else:
+            logging.info('Finished parsing!')
 
     def handleBasicTypeDefs(self, basicTypeDefs):
-        for typeDef in basicTypeDefs:
-            btd = BasicClass()
-            # There may be more than one name there
-            # When we figure out how to unescape CDATA, we need to break it down
-            # for now, the gnarly string is the name of the object
-            btd.name = self.handleName(typeDef.getElementsByTagName('name')[0])
-            btd.type = 'basicTypeDef'
-            btd.name = self.asciiConv(btd.name)
-            logging.info('New %s' % btd)
-            self.generated.append(btd)
+        if basicTypeDefs:
+            for typeDef in basicTypeDefs:
+                btd = BasicClass()
+                # There may be more than one name there
+                # When we figure out how to unescape CDATA, we need to break it down
+                # for now, the gnarly string is the name of the object
+                btd.name = self.handleName(typeDef.getElementsByTagName('name')[0])
+                btd.type = 'basicTypeDef'
+                logging.info('New %s' % btd)
+                self.generated.append(btd)
+        else:
+            return
 
     # TODO: Figure out how to ignore tags that aren't used in the file being parsed.
-    def handleFreeTypeDef(self, freeTypeDef):
-        pass
+    def handleFreeTypeDef(self, freeTypeDefs):
+        if freeTypeDefs:
+            for freeType in freeTypeDefs:
+                # do stuff
+                pass
+        else:
+            return
+
+    def handleClassDefs(self, classDefs):
+        if classDefs:
+            for classDef in classDefs:
+                self.handleClassDef(classDef)
+        else:
+            return
 
     def handleClassDef(self, classDef):
         cls = BasicClass()
@@ -94,10 +108,13 @@ class XMLParser(object):
     # it's likely that a class will have several operations,
     # so we have a dedicated function to iterate through all.
     def handleOperations(self, operations):
-        functions = []
-        for operation in operations:
-            functions.append(self.handleOperation(operation))
-        return functions
+        if operations:
+            functions = []
+            for operation in operations:
+                functions.append(self.handleOperation(operation))
+            return functions
+        else:
+            return
 
     def handleOperation(self, operation):
         ftn = Function()
