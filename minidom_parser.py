@@ -51,16 +51,23 @@ class XMLParser(object):
     def handleBasicTypeDefs(self, basicTypeDefs):
         if basicTypeDefs:
             for typeDef in basicTypeDefs:
-                btd = BasicClass()
-                # There may be more than one name there
-                # When we figure out how to unescape CDATA, we need to break it down
-                # for now, the gnarly string is the name of the object
-                btd.name = self.handleName(typeDef.getElementsByTagName('name')[0])
-                btd.type = 'basicTypeDef'
-                logging.info('New %s' % btd)
-                self.generated.append(btd)
+                self.handleBasicTypeDef(typeDef)
         else:
             return
+
+    def handleBasicTypeDef(self, basicTypeDef):
+        # There may be more than one name there
+        # When we figure out how to unescape CDATA, we need to break it down
+        # for now, the gnarly string is the name of the object
+        names = self.handleName(basicTypeDef.getElementsByTagName('name')[0])
+        names = names.split(',')
+        for name in names:
+            name.strip()
+            btd = BasicClass()
+            btd.name = name
+            btd.type = 'basicTypeDef'
+            logging.info('New %s' % btd)
+            self.generated.append(btd)
 
     # TODO: Figure out how to ignore tags that aren't used in the file being parsed.
     def handleFreeTypeDef(self, freeTypeDefs):
@@ -135,13 +142,14 @@ class XMLParser(object):
         if declaration:
             state = self.getCDATA(declaration.childNodes)
             # TODO here we need to put some sort of parser for raw text
-            print state
+            print "State! %s" % state
         else:
             return
 
     def handleOperationDeclaration(self, declaration):
-        print declaration
-        pass
+        if declaration:
+            dec = self.getCDATA(declaration.childNodes)
+            print "Declaration! %s" % dec
 
     def handleStatePredicate(self, predicate):
         # Don't care
