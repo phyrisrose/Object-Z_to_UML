@@ -10,6 +10,9 @@ class BasicClass(object):
         self.attributes = []  # List of type Object here
         self.functions = []  # List of type Function here
 
+    def __repr__(self):
+        return "Object %s named %s" % (self.type, self.name)
+
 
 class Function(object):
 
