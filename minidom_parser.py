@@ -58,6 +58,7 @@ class XMLParser(object):
                 # for now, the gnarly string is the name of the object
                 btd.name = self.handleName(typeDef.getElementsByTagName('name')[0])
                 btd.type = 'basicTypeDef'
+                btd.name = self.asciiConv(btd.name)
                 logging.info('New %s' % btd)
                 self.generated.append(btd)
         else:
