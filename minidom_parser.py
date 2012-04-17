@@ -49,6 +49,24 @@ class XMLParser(object):
         else:
             logging.info('Finished parsing!')
 
+    #### TOZE Field Handler Methods ####
+    #Generic TOZE Fields
+    def handleName(self, name):
+        return self.getCDATA(name.childNodes)
+
+    def handleStatePredicate(self, predicate):
+        # Don't care
+        pass
+
+    def handleOperationPredicate(self, predicate):
+        # Don't care
+        pass
+
+    # Definitions
+    def handleAbbreviationDefs(self, abbreviationDefs):
+        pass
+    def handleAxiomaticDefs(self, axiomaticDefs):
+        pass
     def handleBasicTypeDefs(self, basicTypeDefs):
         if basicTypeDefs:
             for typeDef in basicTypeDefs:
@@ -72,6 +90,13 @@ class XMLParser(object):
         else:
             return
 
+    def handleGenericTypeDefs(self, genericTypeDefs):
+        pass
+
+    def handleSchemaDef(self, schemaDefs):
+        pass
+
+    #Class specific handlers.
     def handleClassDefs(self, classDefs):
         if classDefs:
             for classDef in classDefs:
@@ -92,17 +117,31 @@ class XMLParser(object):
         logging.info("New %s" % cls)
         self.generated.append(cls)
 
-    def handleName(self, name):
-        return self.getCDATA(name.childNodes)
+    def handleVisibilityLists(self, visibilityLists):
+        pass
+
+    def handleInheritedClasses(self, inheritedClasses):
+        pass
 
     def handleState(self, states):
         for state in states:
             self.handleStateDeclaration(state.getElementsByTagName('declaration')[0])
             self.handleStatePredicate(state.getElementsByTagName('predicate')[0])
 
+    # From what I gather, state and operation declarations and predicates
+    # serve different purposes. So we need a special one for each
+    def handleStateDeclaration(self, declaration):
+        if declaration:
+            state = self.getCDATA(declaration.childNodes)
+            # TODO here we need to put some sort of parser for raw text
+            print state
+        else:
+            return
+
     def handleInitState(self, initialState):
         pass
 
+    # Operation Handlers
     # it's likely that a class will have several operations,
     # so we have a dedicated function to iterate through all.
     def handleOperations(self, operations):
@@ -126,25 +165,7 @@ class XMLParser(object):
         logging.info('New Function %s' % ftn.name)
         return ftn
 
-    # From what I gather, state and operation declarations and predicates
-    # serve different purposes. So we need a special one for each
-    def handleStateDeclaration(self, declaration):
-        if declaration:
-            state = self.getCDATA(declaration.childNodes)
-            # TODO here we need to put some sort of parser for raw text
-            print state
-        else:
-            return
-
     def handleOperationDeclaration(self, declaration):
-        pass
-
-    def handleStatePredicate(self, predicate):
-        # Don't care
-        pass
-
-    def handleOperationPredicate(self, predicate):
-        # Don't care
         pass
 
     def handleOpDeltaList(self, deltaList):
@@ -154,4 +175,7 @@ class XMLParser(object):
             # Uhh... that's just a name, TODO: we need to look up the type of it.
             # Also, what if there are more than one attributes altered?
             # What's going to be the return type?
+        pass
+
+    def handleOperationExpression(self, operationExpressions):
         pass
