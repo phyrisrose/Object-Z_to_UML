@@ -29,7 +29,6 @@ class XMLParser(object):
                 ascii = ascii + char
             if char == '&' and ascii != "":
                 type_name += chr(int(ascii))
-                new_char = ""
                 ascii = ""
         type_name += chr(int(ascii))
         return type_name
@@ -85,7 +84,7 @@ class XMLParser(object):
         cls.type = 'class'
         # CLASS CHILDREN HANDLERS HERE
         self.handleState(classDef.getElementsByTagName('state'))
-        self.handleInitState(classDef.getElementsByTagName('initialState')[0])
+        self.handleInitState(classDef)
         ftns_to_append = self.handleOperations(classDef.getElementsByTagName('operation'))
         cls.functions.append(ftns_to_append)
         # by this point, the class entity should be complete
@@ -100,8 +99,12 @@ class XMLParser(object):
             self.handleStateDeclaration(state.getElementsByTagName('declaration')[0])
             self.handleStatePredicate(state.getElementsByTagName('predicate')[0])
 
-    def handleInitState(self, initialState):
-        pass
+    def handleInitState(self, classDef):
+        constructor = Function()
+        constructor.name = classDef.name
+        #UML generation for constructor functions
+        logging.info('New constructor %s' % constructor.name)
+
 
     # it's likely that a class will have several operations,
     # so we have a dedicated function to iterate through all.
@@ -137,6 +140,7 @@ class XMLParser(object):
             return
 
     def handleOperationDeclaration(self, declaration):
+        print declaration
         pass
 
     def handleStatePredicate(self, predicate):
