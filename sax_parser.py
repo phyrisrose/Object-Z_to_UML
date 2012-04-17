@@ -75,7 +75,8 @@ class XMLParser(xml.sax.ContentHandler):
             self.cur_object.name = 'Touched'
 
     def operation(self):
-        pass
+        fun = Function()
+        self.cur_object.functions.append(fun)
 
     def predicate(self):
         pass
@@ -84,3 +85,11 @@ class XMLParser(xml.sax.ContentHandler):
         pass
 
 
+
+def main():
+    source = open('sample.xml')
+    parser = XMLParser()
+    xml.sax.parse(source, parser)
+    print parser.generated
+
+main()
