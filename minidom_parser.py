@@ -39,7 +39,7 @@ class XMLParser(object):
         for node in nodelist:
             if node.nodeType == node.CDATA_SECTION_NODE:
                 rc.append(node.data.strip())
-        return ''.join(rc)
+        return self.asciiConv(''.join(rc))
 
     def handleTOZE(self, TOZE):
         if TOZE:
@@ -58,7 +58,6 @@ class XMLParser(object):
                 # for now, the gnarly string is the name of the object
                 btd.name = self.handleName(typeDef.getElementsByTagName('name')[0])
                 btd.type = 'basicTypeDef'
-                btd.name = self.asciiConv(btd.name)
                 logging.info('New %s' % btd)
                 self.generated.append(btd)
         else:
@@ -90,7 +89,6 @@ class XMLParser(object):
         ftns_to_append = self.handleOperations(classDef.getElementsByTagName('operation'))
         cls.functions.append(ftns_to_append)
         # by this point, the class entity should be complete
-        cls.name = self.asciiConv(cls.name)
         logging.info("New %s" % cls)
         self.generated.append(cls)
 
@@ -99,7 +97,6 @@ class XMLParser(object):
 
     def handleState(self, states):
         for state in states:
-            # do something with state
             self.handleStateDeclaration(state.getElementsByTagName('declaration')[0])
             self.handleStatePredicate(state.getElementsByTagName('predicate')[0])
 
@@ -126,23 +123,35 @@ class XMLParser(object):
         # assume the previous functions gathered some data, now we
         # ftn.append_some_attributes_to_the_object
         # and pass it up to handleOperations()
-        ftn.name = self.asciiConv(ftn.name)
         logging.info('New Function %s' % ftn.name)
         return ftn
 
     # From what I gather, state and operation declarations and predicates
     # serve different purposes. So we need a special one for each
     def handleStateDeclaration(self, declaration):
-        pass
+        if declaration:
+            state = self.getCDATA(declaration.childNodes)
+            # TODO here we need to put some sort of parser for raw text
+            print state
+        else:
+            return
 
     def handleOperationDeclaration(self, declaration):
         pass
 
     def handleStatePredicate(self, predicate):
+        # Don't care
         pass
 
     def handleOperationPredicate(self, predicate):
+        # Don't care
         pass
 
     def handleOpDeltaList(self, deltaList):
+        if deltaList:
+            dl = self.getCDATA(deltaList.childNodes)
+            print "return! %s" % dl
+            # Uhh... that's just a name, TODO: we need to look up the type of it.
+            # Also, what if there are more than one attributes altered?
+            # What's going to be the return type?
         pass
