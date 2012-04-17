@@ -1,6 +1,8 @@
 __authors__ = 'Sam Sorensen', 'Keith Smith', 'Anna Andriyanova'
 __date__ = 'Spring 2012'
 
+#TODO figure out what to do if the major elements are not defined in predicted order.
+# for example, basicTypeDef came after classDef
 
 import xml.dom.minidom
 import logging
@@ -38,7 +40,7 @@ class XMLParser(object):
             # for now, the gnarly string is the name of the object
             btd.name = self.handleName(typeDef.getElementsByTagName('name')[0])
             btd.type = 'basicTypeDef'
-            logging.info('New basicTypeDef: %s' % btd)
+            logging.info('New %s' % btd)
             self.generated.append(btd)
 
     # TODO: Figure out how to ignore tags that aren't used in the file being parsed.
@@ -55,6 +57,7 @@ class XMLParser(object):
         ftns_to_append = self.handleOperations(classDef.getElementsByTagName('operation'))
         cls.functions.append(ftns_to_append)
         # by this point, the class entity should be complete
+        logging.info("New %s" % cls)
         self.generated.append(cls)
 
     def handleName(self, name):
@@ -86,6 +89,7 @@ class XMLParser(object):
         # assume the previous functions gathered some data, now we
         # ftn.append_some_attributes_to_the_object
         # and pass it up to handleOperations()
+        logging.info('New Function %s' % ftn.name)
         return ftn
 
     # From what I gather, state and operation declarations and predicates
