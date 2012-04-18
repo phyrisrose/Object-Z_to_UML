@@ -48,6 +48,24 @@ class XMLParser(object):
         else:
             logging.info('Finished parsing!')
 
+    #### TOZE Field Handler Methods ####
+    #Generic TOZE Fields
+    def handleName(self, name):
+        return self.getCDATA(name.childNodes)
+
+    def handleStatePredicate(self, predicate):
+        # Don't care
+        pass
+
+    def handleOperationPredicate(self, predicate):
+        # Don't care
+        pass
+
+    # Definitions
+    def handleAbbreviationDefs(self, abbreviationDefs):
+        pass
+    def handleAxiomaticDefs(self, axiomaticDefs):
+        pass
     def handleBasicTypeDefs(self, basicTypeDefs):
         if basicTypeDefs:
             for typeDef in basicTypeDefs:
@@ -78,6 +96,13 @@ class XMLParser(object):
         else:
             return
 
+    def handleGenericTypeDefs(self, genericTypeDefs):
+        pass
+
+    def handleSchemaDef(self, schemaDefs):
+        pass
+
+    #Class specific handlers.
     def handleClassDefs(self, classDefs):
         if classDefs:
             for classDef in classDefs:
@@ -91,15 +116,18 @@ class XMLParser(object):
         cls.type = 'class'
         # CLASS CHILDREN HANDLERS HERE
         self.handleState(classDef.getElementsByTagName('state'))
-        self.handleInitState(classDef)
+        self.handleInitState(classDef.getElementsByTagName('initialState')[0])
         ftns_to_append = self.handleOperations(classDef.getElementsByTagName('operation'))
         cls.functions.append(ftns_to_append)
         # by this point, the class entity should be complete
         logging.info("New %s" % cls)
         self.generated.append(cls)
 
-    def handleName(self, name):
-        return self.getCDATA(name.childNodes)
+    def handleVisibilityLists(self, visibilityLists):
+        pass
+
+    def handleInheritedClasses(self, inheritedClasses):
+        pass
 
     def handleState(self, states):
         for state in states:
@@ -113,6 +141,7 @@ class XMLParser(object):
         logging.info('New constructor %s' % constructor.name)
 
 
+    # Operation Handlers
     # it's likely that a class will have several operations,
     # so we have a dedicated function to iterate through all.
     def handleOperations(self, operations):
@@ -151,14 +180,6 @@ class XMLParser(object):
             dec = self.getCDATA(declaration.childNodes)
             print "Declaration! %s" % dec
 
-    def handleStatePredicate(self, predicate):
-        # Don't care
-        pass
-
-    def handleOperationPredicate(self, predicate):
-        # Don't care
-        pass
-
     def handleOpDeltaList(self, deltaList):
         if deltaList:
             dl = self.getCDATA(deltaList.childNodes)
@@ -166,4 +187,7 @@ class XMLParser(object):
             # Uhh... that's just a name, TODO: we need to look up the type of it.
             # Also, what if there are more than one attributes altered?
             # What's going to be the return type?
+        pass
+
+    def handleOperationExpression(self, operationExpressions):
         pass
