@@ -37,3 +37,8 @@ class Relation(object):
         self.endpoints_b = None
         self.decoration_a = None
         self.decoration_b = None
+
+class TypeDef(object):
+
+    def __init__(self):
+        self.name = ''
