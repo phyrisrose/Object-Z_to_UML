@@ -1,13 +1,10 @@
-from xml.dom import minidom
-
 __authors__ = 'Sam Sorensen', 'Keith Smith', 'Anna Andriyanova'
 __date__ = 'Spring 2012'
 
 import xml.etree.ElementTree as ET
 from xml.dom import minidom
-import xml.dom.minidom
-class UMLBuilder(object):
 
+class UMLBuilder(object):
 
     def __init__(self, classes_list, relations_list, types_list):
         self.classes_list = classes_list
@@ -25,11 +22,12 @@ class UMLBuilder(object):
         f = open(outfile, 'w')
         f.write(tree_string)
 
-
+    #Iterate through all classes, and build uxf elements with gen_class()
     def process_classes(self):
         for class_el in self.classes_list:
             self.gen_class(class_el)
 
+    #Build uxf element for a class
     def gen_class(self, cur_class):
         #Create Class
         uxf_class = ET.SubElement(self.diagram, "element")
@@ -64,7 +62,9 @@ class UMLBuilder(object):
                 params = params[:-1] #Strip the last comma from params list
                 class_contents += operation.name + '(' + params + ')' + '\n'
         uxf_attributes.text = class_contents
+        uxf_additional_attributes = ET.SubElement(uxf_class, "additional_attributes")
 
+    #Make XML pretty
     def prettify(self, txt, outfile):
         cleaned = minidom.parseString(txt)
         return cleaned.toprettyxml(indent = "    ")
