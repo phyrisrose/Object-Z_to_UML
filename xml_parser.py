@@ -3,8 +3,6 @@ from xml.dom.expatbuilder import TEXT_NODE
 __authors__ = 'Sam Sorensen', 'Keith Smith', 'Anna Andriyanova'
 __date__ = 'Spring 2012'
 
-#TODO figure out what to do if the major elements are not defined in predicted order.
-# for example, basicTypeDef came after classDef
 
 import xml.dom.minidom
 import logging
@@ -74,11 +72,12 @@ class XMLParser(object):
     #### TOZE Field Handler Methods ####
     # Definitions
 
-    def handle_cdata_tag(self, input_node):
+    def handle_cdata_tag(self, node):
         cdata_string = ''
-        #TODO pull CDATA
+        if node.nodeType == node.CDATA_SECTION_NODE:
+            cdata_string = self.asciiConv(node.data.strip())
         return cdata_string
-
+    
     def handle_type(self, type_def):
         uml_type_obj = TypeDef()
         for sub_node in type_def.childNodes:
