@@ -42,6 +42,12 @@ class Relation(object):
         self.decoration_a = None
         self.decoration_b = None
 
+class VarDef(object):
+
+    def __init__(self):
+        self.name = ''
+        self.type = ''
+
 class TypeDef(object):
 
     def __init__(self):
