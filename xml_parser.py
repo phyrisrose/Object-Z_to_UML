@@ -135,12 +135,12 @@ class XMLParser(object):
             #elif sub_node.nodeName == 'deltaList':
             #    uml_func_obj.parameter_list = self.handle_parameter_list(sub_node)
             elif sub_node.nodeName == 'declaration':
-                uml_func_obj.parameter_list = self.handle_parameter_list(sub_node)
+                uml_func_obj.parameter_list = self.handle_declaration(sub_node)
             elif sub_node.nodeName == 'predicate':
                 uml_func_obj.predicate = self.handle_cdata_tag(sub_node)
         parent_uml_obj.functions.append(uml_func_obj)
 
-    def handle_parameter_list(self, delta_list_node):
+    def handle_declaration(self, delta_list_node):
         cdata = self.handle_cdata_tag(delta_list_node)
         params = ''
         for char in list(cdata):
@@ -148,7 +148,6 @@ class XMLParser(object):
                 params += ', '
             elif char != '?':
                 params += char
-            print params
         return params
 
     def handle_bare_predicate(self, node):
