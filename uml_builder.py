@@ -56,15 +56,8 @@ class UMLBuilder(object):
         #Add Operations
         if len(cur_class.functions) > 0:
             for operation in cur_class.functions:
-                params = ''
-                for var in operation.parameter_list:
-                    #params += var + ','
-                    if len(var) > 1:
-                        params += var.name + ':' + var.type + ','
-                    else:
-                        params += var
-                #params = params[:-1] #Strip the last comma from params list
-                class_contents += operation.name + '(' + params + ')' + '\n'
+
+                class_contents += operation.name + '(' + str(operation.parameter_list) + ')' + '\n'
         uxf_attributes.text = class_contents
         uxf_additional_attributes = ET.SubElement(uxf_class, "additional_attributes")
 
