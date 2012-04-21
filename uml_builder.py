@@ -50,13 +50,9 @@ class UMLBuilder(object):
         class_contents = cur_class.name
         class_contents += '\n--\n'
         #Add Attributes
-        '''
-        if len(cur_class.attributes) > 0:
-            for attribute in cur_class.attributes:
-                class_contents += '-' + attribute.name + ': ' + attribute.type + '\n'
-            class_contents += '--\n'
-            '''
-        class_contents += '-' + cur_class.attributes + '\n'
+        if cur_class.attributes != '':
+            temp = cur_class.attributes.replace(', ','\n-')
+            class_contents += '-' + temp + '\n--\n'
         #Add Operations
         if len(cur_class.functions) > 0:
             for operation in cur_class.functions:

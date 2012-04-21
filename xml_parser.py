@@ -30,9 +30,13 @@ class XMLParser(object):
             if char != "&" and char != "#":
                 ascii = ascii + char
             if char == '&' and ascii != "":
-                type_name += chr(int(ascii))
+                #Upper ascii isn't handled yet, ignore for now.
+                if int(ascii) < 128:
+                    type_name += chr(int(ascii))
                 ascii = ""
-        type_name += chr(int(ascii))
+        #Upper ascii isn't handled yet, ignore for now.
+        if int(ascii) < 128:
+            type_name += chr(int(ascii))
         return type_name
 
     def getCDATA(self, nodelist):
