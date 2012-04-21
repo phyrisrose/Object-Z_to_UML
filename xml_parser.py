@@ -72,8 +72,9 @@ class XMLParser(object):
 
     def handle_cdata_tag(self, node):
         cdata_string = ''
-        if node.nodeType == node.CDATA_SECTION_NODE:
-            cdata_string = self.asciiConv(node.data.strip())
+        for node in node.childNodes:
+            if node.nodeType == node.CDATA_SECTION_NODE:
+                cdata_string = self.asciiConv(node.data.strip())
         return cdata_string
     
     def handle_type(self, type_def):

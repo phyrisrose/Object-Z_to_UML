@@ -6,7 +6,10 @@ from uml_builder import UMLBuilder
 
 parser = XMLParser('sample.xml')
 builder = UMLBuilder(parser.classes_list, parser.relations_list, parser.types_list)
-builder.gen_uml('uml.uxf')
+print "##########"
+print "Lists:"
 print parser.classes_list
 print parser.relations_list
 print parser.types_list
+print "##########"
+builder.gen_uml('uml.uxf')
