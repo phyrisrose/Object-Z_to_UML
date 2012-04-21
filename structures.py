@@ -9,6 +9,8 @@ class BasicClass(object):
         self.type = ''
         self.attributes = []  # List of type Object here
         self.functions = []  # List of type Function here
+        self.internal_type_defs = []
+        self.vis_list = []
 
     def __repr__(self):
         return "%s named %s" % (self.type, self.name)
@@ -20,6 +22,8 @@ class Function(object):
         self.name = ''
         self.return_type = ''
         self.parameter_list = [] # List of type Object here
+        self.declaration = ''
+        self.predicate = ''
 
 
 #class Inheritance(object):
@@ -42,3 +46,7 @@ class TypeDef(object):
 
     def __init__(self):
         self.name = ''
+        self.type = ''
+        self.expression = ''
+        self.declaration = ''
+        self.predicate = ''
