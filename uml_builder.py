@@ -18,7 +18,8 @@ class UMLBuilder(object):
 
         print ET.tostring(self.diagram)
         #diagram.write(outfile, True)
-        tree_string = self.prettify(ET.tostring(self.diagram, 'utf-8'),outfile)
+        #tree_string = self.prettify(ET.tostring(self.diagram, 'utf-8'),outfile)
+        tree_string = ET.tostring(self.diagram, 'utf-8')
         f = open(outfile, 'w')
         f.write(tree_string)
 
@@ -37,11 +38,11 @@ class UMLBuilder(object):
         uxf_coord = ET.SubElement(uxf_class, "coordinates")
         uxf_coord_x = ET.SubElement(uxf_coord, "x")
         uxf_coord_x.text = str(self.class_x)
-        self.class_x += 220
+        self.class_x += 270
         uxf_coord_y = ET.SubElement(uxf_coord, "y")
         uxf_coord_y.text = '20'
         uxf_size_w = ET.SubElement(uxf_coord, "w")
-        uxf_size_w.text = '200'
+        uxf_size_w.text = '250'
         uxf_size_h = ET.SubElement(uxf_coord, 'h')
         uxf_size_h.text = '300'
         #Add Class Contents
@@ -49,18 +50,18 @@ class UMLBuilder(object):
         class_contents = cur_class.name
         class_contents += '\n--\n'
         #Add Attributes
+        '''
         if len(cur_class.attributes) > 0:
             for attribute in cur_class.attributes:
                 class_contents += '-' + attribute.name + ': ' + attribute.type + '\n'
             class_contents += '--\n'
+            '''
+        class_contents += '-' + cur_class.attributes + '\n'
         #Add Operations
         if len(cur_class.functions) > 0:
             for operation in cur_class.functions:
-                params = ''
-                for var in operation.parameter_list:
-                    params += var.name + ':' + var.type + ','
-                params = params[:-1] #Strip the last comma from params list
-                class_contents += operation.name + '(' + params + ')' + '\n'
+
+                class_contents += '#' + operation.name + '(' + str(operation.parameter_list) + ')' + '\n'
         uxf_attributes.text = class_contents
         uxf_additional_attributes = ET.SubElement(uxf_class, "additional_attributes")
 
