@@ -54,7 +54,7 @@ lookup = {'216': 'logical_not',
           '244': 'xi', #AAA
           '247': 'theta',
           '246': 'mu_unique_spec',
-          '168': 'set_of_relations',
+          '168': 'set_of_relation',
           '218': 'logical_or',
           '243': 'delta',
           '228': 'ge',

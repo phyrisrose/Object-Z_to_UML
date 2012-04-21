@@ -3,6 +3,8 @@ from xml.dom.expatbuilder import TEXT_NODE
 __authors__ = 'Sam Sorensen', 'Keith Smith', 'Anna Andriyanova'
 __date__ = 'Spring 2012'
 
+#TODO Handle upper ASCII characters
+#TODO Create relations
 
 import xml.dom.minidom
 import logging

@@ -4,6 +4,9 @@ __date__ = 'Spring 2012'
 import xml.etree.ElementTree as ET
 from xml.dom import minidom
 
+#TODO create relations
+#TODO create basic UML object types e.g. BLOCK, USER, etc.
+
 class UMLBuilder(object):
 
     def __init__(self, classes_list, relations_list, types_list):
