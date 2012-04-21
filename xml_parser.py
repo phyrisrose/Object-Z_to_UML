@@ -73,22 +73,28 @@ class XMLParser(object):
 
     #### TOZE Field Handler Methods ####
     # Definitions
+
+    def handle_cdata_tag(self, input_node):
+        cdata_string = ''
+        #TODO pull CDATA
+        return cdata_string
+
     def handle_type(self, type_def):
         uml_type_obj = TypeDef()
         for sub_node in type_def.childNodes:
             if sub_node.nodeName == 'name':
-                uml_type_obj.name = sub_node.strip()
+                uml_type_obj.name = self.handle_cdata_tag(sub_node)
             elif sub_node.nodeName == 'expression':
-                uml_type_obj.expression = sub_node.strip()
+                uml_type_obj.expression = self.handle_cdata_tag(sub_node)
         self.types_list.append(uml_type_obj)
 
     def handle_type_in_class(self, type_def, owner_class):
         uml_type_obj = TypeDef()
         for sub_node in type_def.childNodes:
             if sub_node.nodeName == 'name':
-                uml_type_obj.name = sub_node.strip()
+                uml_type_obj.name = self.handle_cdata_tag(sub_node)
             elif sub_node.nodeName == 'expression':
-                uml_type_obj.expression = sub_node.strip()
+                uml_type_obj.expression = self.handle_cdata_tag()
         owner_class.internal_type_defs.append(uml_type_obj)
 
     def handle_schema_def(self, schema_def):
@@ -99,11 +105,11 @@ class XMLParser(object):
         uml_class_obj = BasicClass()
         for sub_node in class_def.childNodes:
             if sub_node.nodeName == 'name':
-                uml_class_obj.name = sub_node.strip()
+                uml_class_obj.name = self.handle_cdata_tag(sub_node)
             elif sub_node.nodeName == 'visibilityList':
-                uml_class_obj.vis_list = sub_node.strip()
+                uml_class_obj.vis_list = self.handle_cdata_tag(sub_node)
             elif sub_node.nodeName == 'inheritedClass':
-                uml_class_obj.inherited_class = sub_node.strip()
+                uml_class_obj.inherited_class = self.handle_cdata_tag(sub_node)
             elif sub_node.nodeName == 'abbreviationDef':
                 self.handle_type_in_class(sub_node, uml_class_obj)
             elif sub_node.nodeName == 'axiomaticDef':
@@ -127,13 +133,13 @@ class XMLParser(object):
         uml_func_obj = Function()
         for sub_node in node.childNodes:
             if sub_node.nodeName == 'name':
-                uml_func_obj.name = sub_node.strip()
+                uml_func_obj.name = self.handle_cdata_tag(sub_node)
             elif sub_node.nodeName == 'deltaList':
-                uml_func_obj.paramenter_list = self.getCDATA(deltaList.childNodes)
+                uml_func_obj.parameter_list = self.getCDATA(sub_node.childNodes)
             elif sub_node.nodeName == 'declaration':
-                uml_func_obj.declaration = sub_node.strip()
+                uml_func_obj.declaration = self.handle_cdata_tag(sub_node)
             elif sub_node.nodeName == 'predicate':
-                uml_func_obj.predicate = sub_node.strip()
+                uml_func_obj.predicate = self.handle_cdata_tag(sub_node)
         parent_uml_obj.functions.append(uml_func_obj)
 
     def handle_bare_predicate(self, node):
