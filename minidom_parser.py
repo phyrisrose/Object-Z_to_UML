@@ -29,7 +29,6 @@ class XMLParser(object):
                 ascii = ascii + char
             if char == '&' and ascii != "":
                 type_name += chr(int(ascii))
-                new_char = ""
                 ascii = ""
         type_name += chr(int(ascii))
         return type_name
@@ -135,18 +134,12 @@ class XMLParser(object):
             self.handleStateDeclaration(state.getElementsByTagName('declaration')[0])
             self.handleStatePredicate(state.getElementsByTagName('predicate')[0])
 
-    # From what I gather, state and operation declarations and predicates
-    # serve different purposes. So we need a special one for each
-    def handleStateDeclaration(self, declaration):
-        if declaration:
-            state = self.getCDATA(declaration.childNodes)
-            # TODO here we need to put some sort of parser for raw text
-            print state
-        else:
-            return
+    def handleInitState(self, classDef):
+        constructor = Function()
+        constructor.name = classDef.name
+        #UML generation for constructor functions
+        logging.info('New constructor %s' % constructor.name)
 
-    def handleInitState(self, initialState):
-        pass
 
     # Operation Handlers
     # it's likely that a class will have several operations,
