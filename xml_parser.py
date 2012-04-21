@@ -124,8 +124,16 @@ class XMLParser(object):
                 self.handle_operation(sub_node, uml_class_obj)
         self.classes_list.append(uml_class_obj)
 
-    def handle_state(self,sub_node, uml_class_obj):
-        pass
+    def handle_state(self, state_node, parent_uml_obj):
+        for sub_node in state_node.childNodes:
+            if sub_node.nodeName == 'name':
+                parent_uml_obj.attributes += '\n?' + self.handle_cdata_tag(sub_node) + '?\n'
+            elif sub_node.nodeName == 'declaration':
+                parent_uml_obj.attributes += self.handle_declaration(sub_node)
+            elif sub_node.nodeName == 'predicate':
+                parent_uml_obj.predicate_rules += self.handle_cdata_tag(sub_node)
+
+
 
     def handle_operation(self, node, parent_uml_obj):
         uml_func_obj = Function()
