@@ -32,7 +32,6 @@ class XMLParser(object):
                 ascii = ascii + char
             if char == '&' and ascii != "":
                 type_name += chr(int(ascii))
-                new_char = ""
                 ascii = ""
         type_name += chr(int(ascii))
         return type_name
