@@ -84,6 +84,8 @@ class XMLParser(object):
                 uml_type_obj.name = self.handle_cdata_tag(sub_node)
             elif sub_node.nodeName == 'expression':
                 uml_type_obj.expression = self.handle_cdata_tag(sub_node)
+            elif sub_node.nodeName == 'declaration':
+                uml_type_obj.name = self.handle_declaration(sub_node)
         self.types_list.append(uml_type_obj)
 
     def handle_type_in_class(self, type_def, owner_class):
@@ -93,6 +95,8 @@ class XMLParser(object):
                 uml_type_obj.name = self.handle_cdata_tag(sub_node)
             elif sub_node.nodeName == 'expression':
                 uml_type_obj.expression = self.handle_cdata_tag()
+            elif sub_node.nodeName == 'declaration':
+                uml_type_obj.name = self.handle_declaration(sub_node)
         owner_class.internal_type_defs.append(uml_type_obj)
 
     def handle_schema_def(self, schema_def):
