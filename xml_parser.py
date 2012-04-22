@@ -74,7 +74,7 @@ class XMLParser(object):
                 elif node.nodeName == 'axiomaticDef':
                     self.handle_type(node)
                 elif node.nodeName == 'basicTypeDef':
-                    self.handle_type(node)
+                    self.handle_basic_type(node)
                 elif node.nodeName == 'freeTypeDef':
                     self.handle_type(node)
                 elif node.nodeName == 'genericTypeDef':
@@ -107,7 +107,19 @@ class XMLParser(object):
                 uml_type_obj.expression = self.handle_cdata_tag(sub_node)
             elif sub_node.nodeName == 'declaration':
                 uml_type_obj.name = self.handle_declaration(sub_node)
+            elif sub_node.nodeName == 'predicate':
+                uml_type_obj.predicate = self.handle_cdata_tag(sub_node)
         self.types_list.append(uml_type_obj)
+
+    def handle_basic_type(self, type_def):
+        name_list = []
+        for sub_node in type_def.childNodes:
+            if sub_node.nodeName == 'name':
+                name_list = self.handle_cdata_tag(sub_node).split(',')
+        for name in name_list:
+            uml_type_obj = TypeDef()
+            uml_type_obj.name = name
+            self.types_list.append(uml_type_obj)
 
     def handle_type_in_class(self, type_def, owner_class):
         uml_type_obj = TypeDef()
