@@ -1,4 +1,5 @@
 from xml.dom.expatbuilder import TEXT_NODE
+from extended_ascii_lookup import lookup
 
 __authors__ = 'Sam Sorensen', 'Keith Smith', 'Anna Andriyanova'
 __date__ = 'Spring 2012'
@@ -10,7 +11,7 @@ import xml.dom.minidom
 import logging
 from structures import *
 
-logging.getLogger().setLevel(logging.INFO)
+logging.getLogger().setLevel(logging.DEBUG)
 
 dom = xml.dom.minidom.parseString(open('sample.xml').read())
 
@@ -35,11 +36,25 @@ class XMLParser(object):
                 #Upper ascii isn't handled yet, ignore for now.
                 if int(ascii) < 128:
                     type_name += chr(int(ascii))
+                else:
+                    logging.debug('Ascii in: %s' % int(ascii))
+                    type_name += self.handle_upper_ascii(int(ascii))
                 ascii = ""
         #Upper ascii isn't handled yet, ignore for now.
         if int(ascii) < 128:
             type_name += chr(int(ascii))
+        else:
+            type_name += self.handle_upper_ascii(int(ascii))
         return type_name
+
+    def handle_upper_ascii(self, code):
+        meaning = lookup.get(code, None)
+        if meaning:
+            logging.debug('Meaning found! %s' % meaning)
+            return "%" + meaning + "%"
+        else:
+            logging.error('The Special Character Code is Not Valid')
+
 
     def getCDATA(self, nodelist):
         rc = []
@@ -100,7 +115,7 @@ class XMLParser(object):
             if sub_node.nodeName == 'name':
                 uml_type_obj.name = self.handle_cdata_tag(sub_node)
             elif sub_node.nodeName == 'expression':
-                uml_type_obj.expression = self.handle_cdata_tag()
+                uml_type_obj.expression = self.handle_cdata_tag(sub_node)
             elif sub_node.nodeName == 'declaration':
                 uml_type_obj.name = self.handle_declaration(sub_node)
         owner_class.internal_type_defs.append(uml_type_obj)
