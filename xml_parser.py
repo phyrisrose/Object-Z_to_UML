@@ -9,9 +9,10 @@ __date__ = 'Spring 2012'
 
 import xml.dom.minidom
 import logging
+import re
 from structures import *
 
-logging.getLogger().setLevel(logging.DEBUG)
+logging.getLogger().setLevel(logging.INFO)
 
 dom = xml.dom.minidom.parseString(open('sample.xml').read())
 
@@ -38,7 +39,10 @@ class XMLParser(object):
                     type_name += chr(int(ascii))
                 else:
                     logging.debug('Ascii in: %s' % int(ascii))
-                    type_name += self.handle_upper_ascii(int(ascii))
+                    meaning = self.handle_upper_ascii(int(ascii))
+                    if 'relation' in meaning:
+                        pass
+                    type_name += meaning
                 ascii = ""
         #Upper ascii isn't handled yet, ignore for now.
         if int(ascii) < 128:
@@ -50,8 +54,7 @@ class XMLParser(object):
     def handle_upper_ascii(self, code):
         meaning = lookup.get(code, None)
         if meaning:
-            logging.debug('Meaning found! %s' % meaning)
-            return "%" + meaning + "%"
+            return meaning
         else:
             logging.error('The Special Character Code is Not Valid')
 
@@ -154,7 +157,9 @@ class XMLParser(object):
             if sub_node.nodeName == 'name':
                 parent_uml_obj.attributes += '\n?' + self.handle_cdata_tag(sub_node) + '?\n'
             elif sub_node.nodeName == 'declaration':
-                parent_uml_obj.attributes += self.handle_declaration(sub_node)
+                declaration = self.handle_declaration(sub_node)
+                self.relation_builder(declaration)
+                parent_uml_obj.attributes += declaration
             elif sub_node.nodeName == 'predicate':
                 parent_uml_obj.predicate_rules += self.handle_cdata_tag(sub_node)
 
@@ -181,7 +186,26 @@ class XMLParser(object):
                 params += ', '
             elif char != '?':
                 params += char
+#        logging.info('Params returned: %s' % params)
         return params
 
     def handle_bare_predicate(self, node):
         pass
+
+    def relation_builder(self, declaration):
+        """
+        Take data from a declaration tag that has been translated from ASCII
+        and reformatted by 'handle_declaration()' function and search for relations
+        """
+        attr_template = r'\w*: *(\w*) *(%\w*%) *(\w*)'
+        pattern = re.compile(attr_template)
+        declaration_lines = declaration.split(', ')
+        for line in declaration_lines:
+            match = pattern.match(line)
+            if match:
+                if 'relation' in match.group(2):
+                    rel = Relation()
+                    rel.endpoints_a = match.group(1)
+                    rel.endpoints_b = match.group(3)
+                    rel.type = (match.group(2)).strip('%')
+                    self.relations_list.append(rel)

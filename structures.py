@@ -43,6 +43,11 @@ class Relation(object):
         self.decoration_a = None
         self.decoration_b = None
 
+    def __repr__(self):
+        return "<Relation of type %s from %s to %s>" % (self.type,
+                                                        self.endpoints_a,
+                                                        self.endpoints_b)
+
 class VarDef(object):
 
     def __init__(self):
