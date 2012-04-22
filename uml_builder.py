@@ -18,6 +18,7 @@ class UMLBuilder(object):
         self.class_x = 20
         self.diagram = ET.Element("diagram", program="umlet", version="11.4")
         self.process_classes()
+        self.process_types()
 
         print ET.tostring(self.diagram)
         #diagram.write(outfile, True)
@@ -26,13 +27,27 @@ class UMLBuilder(object):
         f = open(outfile, 'w')
         f.write(tree_string)
 
+    def process_types(self):
+        width = 140
+        height = 30
+        y_coord = 470
+        x_coord = 20
+        for type_el in self.types_list:
+            self.gen_type(type_el, x_coord, y_coord, width, height)
+            x_coord += 160
+
     #Iterate through all classes, and build uxf elements with gen_class()
     def process_classes(self):
-        for class_el in self.classes_list:
-            self.gen_class(class_el)
+        width = 250
+        height = 300
+        y_coord = 20
+        x_coord = 20
+        for type_el in self.classes_list:
+            self.gen_class(type_el, x_coord, y_coord, width, height)
+            x_coord += 270
 
-    #Build uxf element for a class
-    def gen_class(self, cur_class):
+    #Build uxf element for classes and type objects
+    def gen_class(self, cur_class, x_coord, y_coord, width, height):
         #Create Class
         uxf_class = ET.SubElement(self.diagram, "element")
         uxf_type = ET.SubElement(uxf_class, "type")
@@ -40,14 +55,13 @@ class UMLBuilder(object):
         #Position Class
         uxf_coord = ET.SubElement(uxf_class, "coordinates")
         uxf_coord_x = ET.SubElement(uxf_coord, "x")
-        uxf_coord_x.text = str(self.class_x)
-        self.class_x += 270
+        uxf_coord_x.text = str(x_coord)
         uxf_coord_y = ET.SubElement(uxf_coord, "y")
-        uxf_coord_y.text = '20'
+        uxf_coord_y.text = str(y_coord)
         uxf_size_w = ET.SubElement(uxf_coord, "w")
-        uxf_size_w.text = '250'
+        uxf_size_w.text = str(width)
         uxf_size_h = ET.SubElement(uxf_coord, 'h')
-        uxf_size_h.text = '300'
+        uxf_size_h.text = str(height)
         #Add Class Contents
         uxf_attributes = ET.SubElement(uxf_class, "panel_attributes")
         class_contents = cur_class.name
@@ -64,8 +78,28 @@ class UMLBuilder(object):
         uxf_attributes.text = class_contents
         uxf_additional_attributes = ET.SubElement(uxf_class, "additional_attributes")
 
+    def gen_type(self, cur_type, x_coord, y_coord, width, height):
+        #Create Class
+        uxf_class = ET.SubElement(self.diagram, "element")
+        uxf_type = ET.SubElement(uxf_class, "type")
+        uxf_type.text = "com.umlet.element.Class"
+        #Position Class
+        uxf_coord = ET.SubElement(uxf_class, "coordinates")
+        uxf_coord_x = ET.SubElement(uxf_coord, "x")
+        uxf_coord_x.text = str(x_coord)
+        uxf_coord_y = ET.SubElement(uxf_coord, "y")
+        uxf_coord_y.text = str(y_coord)
+        uxf_size_w = ET.SubElement(uxf_coord, "w")
+        uxf_size_w.text = str(width)
+        uxf_size_h = ET.SubElement(uxf_coord, 'h')
+        uxf_size_h.text = str(height)
+        #Add Class Contents
+        uxf_attributes = ET.SubElement(uxf_class, "panel_attributes")
+        class_contents = cur_type.name
+        uxf_attributes.text = class_contents
+        uxf_additional_attributes = ET.SubElement(uxf_class, "additional_attributes")
+
     #Make XML pretty
     def prettify(self, txt, outfile):
         cleaned = minidom.parseString(txt)
         return cleaned.toprettyxml(indent = "    ")
-
