@@ -29,7 +29,7 @@ class UMLBuilder(object):
 
     def process_types(self):
         width = 140
-        height = 30
+        height = 50
         y_coord = 470
         x_coord = 20
         for type_el in self.types_list:
@@ -73,7 +73,6 @@ class UMLBuilder(object):
         #Add Operations
         if len(cur_class.functions) > 0:
             for operation in cur_class.functions:
-
                 class_contents += '#' + operation.name + '(' + str(operation.parameter_list) + ')' + '\n'
         uxf_attributes.text = class_contents
         uxf_additional_attributes = ET.SubElement(uxf_class, "additional_attributes")
@@ -96,6 +95,10 @@ class UMLBuilder(object):
         #Add Class Contents
         uxf_attributes = ET.SubElement(uxf_class, "panel_attributes")
         class_contents = cur_type.name
+        if cur_type.expression != '':
+            class_contents += '\n--\n' + cur_type.expression
+        if cur_type.predicate != '':
+            class_contents += '\n--\n= ' + cur_type.predicate
         uxf_attributes.text = class_contents
         uxf_additional_attributes = ET.SubElement(uxf_class, "additional_attributes")
 
