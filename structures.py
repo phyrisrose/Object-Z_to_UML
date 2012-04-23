@@ -42,6 +42,8 @@ class Relation(object):
         self.endpoints_b = None
         self.decoration_a = None
         self.decoration_b = None
+        self.start_object = None
+        self.end_object = None
 
     def __repr__(self):
         return "<Relation of type %s from %s to %s>" % (self.type,

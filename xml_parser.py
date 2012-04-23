@@ -172,8 +172,6 @@ class XMLParser(object):
             elif sub_node.nodeName == 'predicate':
                 parent_uml_obj.predicate_rules += self.handle_cdata_tag(sub_node)
 
-
-
     def handle_operation(self, node, parent_uml_obj):
         uml_func_obj = Function()
         for sub_node in node.childNodes:
@@ -187,8 +185,8 @@ class XMLParser(object):
                 uml_func_obj.predicate = self.handle_cdata_tag(sub_node)
         parent_uml_obj.functions.append(uml_func_obj)
 
-    def handle_declaration(self, delta_list_node):
-        cdata = self.handle_cdata_tag(delta_list_node)
+    def handle_declaration(self, node):
+        cdata = self.handle_cdata_tag(node)
         params = ''
         for char in list(cdata):
             if char == '\n':

@@ -19,6 +19,7 @@ class UMLBuilder(object):
         self.diagram = ET.Element("diagram", program="umlet", version="11.4")
         self.process_classes()
         self.process_types()
+        self.process_relations()
 
         print ET.tostring(self.diagram)
         #diagram.write(outfile, True)
@@ -26,6 +27,10 @@ class UMLBuilder(object):
         tree_string = ET.tostring(self.diagram, 'utf-8')
         f = open(outfile, 'w')
         f.write(tree_string)
+
+    def process_relations(self):
+        for rel_el in self.relations_list:
+            self.gen_relation(rel_el)
 
     def process_types(self):
         width = 140
@@ -73,6 +78,7 @@ class UMLBuilder(object):
         #Add Operations
         if len(cur_class.functions) > 0:
             for operation in cur_class.functions:
+
                 class_contents += '#' + operation.name + '(' + str(operation.parameter_list) + ')' + '\n'
         uxf_attributes.text = class_contents
         uxf_additional_attributes = ET.SubElement(uxf_class, "additional_attributes")
@@ -101,6 +107,76 @@ class UMLBuilder(object):
             class_contents += '\n--\n= ' + cur_type.predicate
         uxf_attributes.text = class_contents
         uxf_additional_attributes = ET.SubElement(uxf_class, "additional_attributes")
+
+    def gen_relation(self, relation):
+        start_x = 0
+        start_y = 0
+        end_x = 0
+        end_y = 0
+
+        if relation.start_object in self.classes_list:
+            start_x = 145 + self.classes_list.index(relation.start_object) * 270
+            start_y = 320
+        elif relation.start_object in self.types_list:
+            start_x = 90 + self.types_list.index(relation.start_object) * 160
+            start_y = 470
+
+        if relation.end_object in self.classes_list:
+            end_x = 145 + self.classes_list.index(relation.end_object) * 270
+            end_y = 320
+        elif relation.end_object in self.types_list:
+            end_x = 90 + self.types_list.index(relation.end_object) * 160
+            end_y = 470
+
+        if start_x < end_x:
+            relation_x = start_x - 30
+            width = end_x - start_x
+        else:
+            relation_x = end_x - 30
+            width = start_x - end_x
+
+        if start_y < end_y:
+            relation_y = start_y - 30
+            height = end_y - start_y + 50
+        else:
+            relation_y = end_y - 30
+            height = start_y - end_y + 50
+        print start_x
+        print start_y
+        print end_x
+        print end_y
+        print width
+        print height
+
+        #Create Relation
+        uxf_class = ET.SubElement(self.diagram, "element")
+        uxf_type = ET.SubElement(uxf_class, "type")
+        uxf_type.text = "com.umlet.element.Relation"
+        #Position relation
+        uxf_coord = ET.SubElement(uxf_class, "coordinates")
+        uxf_coord_x = ET.SubElement(uxf_coord, "x")
+        uxf_coord_x.text = str(relation_x)
+        uxf_coord_y = ET.SubElement(uxf_coord, "y")
+        uxf_coord_y.text = str(relation_y)
+        uxf_size_w = ET.SubElement(uxf_coord, "w")
+        uxf_size_w.text = str(width)
+        uxf_size_h = ET.SubElement(uxf_coord, 'h')
+        uxf_size_h.text = str(height)
+        #Set type of arrow
+        uxf_attributes = ET.SubElement(uxf_class, "panel_attributes")
+        uxf_attributes.text = "lt=<-"
+        uxf_additional_attributes = ET.SubElement(uxf_class, "additional_attributes")
+        if end_x > start_x:
+            uxf_additional_attributes.text = str(start_x - relation_x) + ';' + \
+                                        str(start_y - relation_y) + ';' + \
+                                         str(end_x) + ';' + \
+                                         str(end_y - relation_y)
+        elif start_x > end_x:
+            if end_x > start_x:
+                uxf_additional_attributes.text = str(width-20) + ';' +\
+                                                 str(start_y - relation_y) + ';' +\
+                                                 str(end_x - relation_x) + ';' +\
+                                                 str(end_y - relation_y)
 
     #Make XML pretty
     def prettify(self, txt, outfile):

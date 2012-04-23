@@ -27,17 +27,31 @@ function_b.parameter_list = [object_b, object_c]
 class_a = structures.BasicClass()
 class_a.name = 'ClassA'
 class_a.type = ''
-class_a.attributes = [object_a, object_b, object_c]
+class_a.attributes = "object_a, object_b, object_c"
 class_a.functions = [function_a, function_b]
 
 class_b = structures.BasicClass()
 class_b.name = 'ClassB'
 class_b.type = ''
-class_b.attributes = [object_b, object_c]
+class_b.attributes = "object_b, object_c"
 class_b.functions = [function_a]
 
-classes_list = [class_a, class_b]
-relations_list = []
+class_c = structures.BasicClass()
+class_c.name = 'ClassC'
+class_c.type = ''
+class_c.attributes = "object_b, object_c"
+class_c.functions = [function_a]
+
+relation = structures.Relation()
+relation.start_object = class_a
+relation.end_object = class_b
+
+relation2 = structures.Relation()
+relation2.start_object = class_b
+relation2.end_object = class_c
+
+classes_list = [class_a, class_b, class_c]
+relations_list = [relation, relation2]
 types_list = []
 outfile = "uml.uxf"
 generator = UMLBuilder(classes_list, relations_list, types_list)
