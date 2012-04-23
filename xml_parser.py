@@ -211,7 +211,7 @@ class XMLParser(object):
             if match:
                 if 'relation' in match.group(2):
                     rel = Relation()
-                    rel.endpoints_a = match.group(1)
-                    rel.endpoints_b = match.group(3)
-                    rel.type = (match.group(2)).strip('%')
+                    rel.start_object = match.group(1)
+                    rel.end_object = match.group(3)
+                    rel.type = ((match.group(2)).strip('%')).strip('_relation')
                     self.relations_list.append(rel)
