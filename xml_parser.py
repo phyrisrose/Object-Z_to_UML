@@ -22,6 +22,8 @@ class XMLParser(object):
         self.classes_list = []
         self.relations_list = []
         self.types_list = []
+        self.current_class_name = ''
+        self.psetExists = False
 
         dom = xml.dom.minidom.parseString(open(in_file).read())
         self.handleTOZE(dom)
@@ -51,6 +53,8 @@ class XMLParser(object):
     def handle_upper_ascii(self, code):
         meaning = lookup.get(code, None)
         if meaning:
+            if meaning == "[]":
+                self.psetExists = True
             return meaning
         else:
             logging.error('The Special Character Code is Not Valid')
@@ -141,6 +145,7 @@ class XMLParser(object):
         for sub_node in class_def.childNodes:
             if sub_node.nodeName == 'name':
                 uml_class_obj.name = self.handle_cdata_tag(sub_node)
+                self.current_class_name = uml_class_obj.name
             elif sub_node.nodeName == 'visibilityList':
                 uml_class_obj.vis_list = self.handle_cdata_tag(sub_node)
             elif sub_node.nodeName == 'inheritedClass':
@@ -212,6 +217,33 @@ class XMLParser(object):
                 if 'relation' in match.group(2):
                     rel = Relation()
                     rel.start_object = match.group(1)
-                    rel.end_object = match.group(3)
+                    if match.group(3).strip() == "int":
+                        rel.end_object = "Integers"
+                        zExists = False
+                        for type in self.types_list:
+                            if type.name == "Integers":
+                                zExists = True
+                        if not zExists:
+                            intType = TypeDef()
+                            intType.name = "Z"
+                            self.types_list.append(intType)
+                    if match.group(3).strip() == "natural":
+                        rel.end_object = "Natural Numbers\n(N)"
+                        zExists = False
+                        for type in self.types_list:
+                            if type.name == "Natural Numbers\n(N)":
+                                zExists = True
+                        if not zExists:
+                            intType = TypeDef()
+                            intType.name = "Natural Numbers\n(N)"
+                            self.types_list.append(intType)
+                    else:
+                        rel.end_object = match.group(3)
                     rel.type = ((match.group(2)).strip('%')).strip('_relation')
                     self.relations_list.append(rel)
+                if '[]' in match.group(2):
+                    set_rel = Relation()
+                    set_rel.type = "comp"
+                    set_rel.start_object = self.current_class_name
+                    set_rel.end_object = match.group(3)
+                    self.relations_list.append(set_rel)

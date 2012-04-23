@@ -36,6 +36,9 @@ class_b.type = ''
 class_b.attributes = "object_b, object_c"
 class_b.functions = [function_a]
 
+typed = structures.TypeDef()
+types = structures.TypeDef()
+
 class_c = structures.BasicClass()
 class_c.name = 'ClassC'
 class_c.type = ''
@@ -43,16 +46,17 @@ class_c.attributes = "object_b, object_c"
 class_c.functions = [function_a]
 
 relation = structures.Relation()
-relation.start_object = class_a
+relation.start_object = types
 relation.end_object = class_b
+relation.type = "set_of"
 
 relation2 = structures.Relation()
-relation2.start_object = class_b
-relation2.end_object = class_c
+relation2.start_object = typed
+relation2.end_object = class_b
 
 classes_list = [class_a, class_b, class_c]
 relations_list = [relation, relation2]
-types_list = []
+types_list = [types, typed]
 outfile = "uml.uxf"
 generator = UMLBuilder(classes_list, relations_list, types_list)
 generator.gen_uml(outfile)

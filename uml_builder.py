@@ -113,6 +113,18 @@ class UMLBuilder(object):
         start_y = 0
         end_x = 0
         end_y = 0
+        type = relation.type;
+
+        for cla in self.classes_list:
+            if cla.name.strip() == relation.start_object:
+                relation.start_object = cla
+            elif cla.name.strip() == relation.end_object:
+                relation.end_object = cla
+        for cla in self.types_list:
+            if cla.name.strip() == relation.start_object:
+                relation.start_object = cla
+            elif cla.name.strip() == relation.end_object:
+                relation.end_object = cla
 
         if relation.start_object in self.classes_list:
             start_x = 145 + self.classes_list.index(relation.start_object) * 270
@@ -130,10 +142,10 @@ class UMLBuilder(object):
 
         if start_x < end_x:
             relation_x = start_x - 30
-            width = end_x - start_x
+            width = end_x - start_x + 60
         else:
             relation_x = end_x - 30
-            width = start_x - end_x
+            width = start_x - end_x + 60
 
         if start_y < end_y:
             relation_y = start_y - 30
@@ -141,12 +153,6 @@ class UMLBuilder(object):
         else:
             relation_y = end_y - 30
             height = start_y - end_y + 50
-        print start_x
-        print start_y
-        print end_x
-        print end_y
-        print width
-        print height
 
         #Create Relation
         uxf_class = ET.SubElement(self.diagram, "element")
@@ -164,15 +170,20 @@ class UMLBuilder(object):
         uxf_size_h.text = str(height)
         #Set type of arrow
         uxf_attributes = ET.SubElement(uxf_class, "panel_attributes")
-        uxf_attributes.text = "lt=<-"
+        if type == 'set_of':
+            uxf_attributes.text = "lt=>-"
+        elif type == 'comp':
+            uxf_attributes.text = "lt=<<<<-\nm1=1\nm2=0..n"
+        else:
+            uxf_attributes.text = "lt=-"
+
         uxf_additional_attributes = ET.SubElement(uxf_class, "additional_attributes")
         if end_x > start_x:
             uxf_additional_attributes.text = str(start_x - relation_x) + ';' + \
                                         str(start_y - relation_y) + ';' + \
-                                         str(end_x) + ';' + \
+                                         str(width-20) + ';' + \
                                          str(end_y - relation_y)
         elif start_x > end_x:
-            if end_x > start_x:
                 uxf_additional_attributes.text = str(width-20) + ';' +\
                                                  str(start_y - relation_y) + ';' +\
                                                  str(end_x - relation_x) + ';' +\
