@@ -26,6 +26,9 @@ class Function(object):
         self.declaration = ''
         self.predicate = ''
 
+    def __repr__(self):
+        return "<Function named %s with parameters: %s>" % (self.name,self.parameter_list)
+
 
 #class Inheritance(object):
 #
@@ -51,6 +54,8 @@ class VarDef(object):
     def __init__(self):
         self.name = ''
         self.type = ''
+    def __repr__(self):
+        return "<VarDef named %s of type %s>" % (self.name,self.type)
 
 class TypeDef(object):
 
@@ -60,3 +65,5 @@ class TypeDef(object):
         self.expression = ''
         self.declaration = ''
         self.predicate = ''
+    def __repr__(self):
+        return "<TypeDef named %s>" % (self.name)

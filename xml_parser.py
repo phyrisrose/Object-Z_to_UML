@@ -53,7 +53,7 @@ class XMLParser(object):
     def handle_upper_ascii(self, code):
         meaning = lookup.get(code, None)
         if meaning:
-            if meaning == "[]":
+            if meaning == "%power_set%":
                 self.psetExists = True
             return meaning
         else:
@@ -164,6 +164,7 @@ class XMLParser(object):
                 self.handle_state(sub_node, uml_class_obj)
             elif sub_node.nodeName == 'operation':
                 self.handle_operation(sub_node, uml_class_obj)
+        uml_class_obj.type = 'Class'
         self.classes_list.append(uml_class_obj)
 
     def handle_state(self, state_node, parent_uml_obj):
@@ -208,7 +209,7 @@ class XMLParser(object):
         Take data from a declaration tag that has been translated from ASCII
         and reformatted by 'handle_declaration()' function and search for relations
         """
-        attr_template = r'\w*: *(\w*) *(%\w*%) *(\w*)'
+        attr_template = r'\w*: *(\w*) *(%.*%) *(\w*)'
         pattern = re.compile(attr_template)
         declaration_lines = declaration.split(', ')
         for line in declaration_lines:
@@ -217,7 +218,7 @@ class XMLParser(object):
                 if 'relation' in match.group(2):
                     rel = Relation()
                     rel.start_object = match.group(1)
-                    if match.group(3).strip() == "int":
+                    if 'int' in match.group(3):
                         rel.end_object = "Integers"
                         zExists = False
                         for type in self.types_list:
@@ -225,9 +226,9 @@ class XMLParser(object):
                                 zExists = True
                         if not zExists:
                             intType = TypeDef()
-                            intType.name = "Z"
+                            intType.name = "Integers"
                             self.types_list.append(intType)
-                    if match.group(3).strip() == "natural":
+                    elif 'natural' in match.group(3):
                         rel.end_object = "Natural Numbers\n(N)"
                         zExists = False
                         for type in self.types_list:
@@ -241,7 +242,7 @@ class XMLParser(object):
                         rel.end_object = match.group(3)
                     rel.type = ((match.group(2)).strip('%')).strip('_relation')
                     self.relations_list.append(rel)
-                if '[]' in match.group(2):
+                if 'power_set' in match.group(2):
                     set_rel = Relation()
                     set_rel.type = "comp"
                     set_rel.start_object = self.current_class_name
