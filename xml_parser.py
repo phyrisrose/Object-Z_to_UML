@@ -238,6 +238,16 @@ class XMLParser(object):
                             intType = TypeDef()
                             intType.name = "Natural Numbers\n(N)"
                             self.types_list.append(intType)
+                    elif 'real' in match.group(3):
+                        rel.end_object = "Real Numbers\n(N)"
+                        zExists = False
+                        for type in self.types_list:
+                            if type.name == "Real Numbers\n(N)":
+                                zExists = True
+                        if not zExists:
+                            intType = TypeDef()
+                            intType.name = "Real Numbers\n(N)"
+                            self.types_list.append(intType)
                     else:
                         rel.end_object = match.group(3)
                     rel.type = ((match.group(2)).strip('%')).strip('_relation')
