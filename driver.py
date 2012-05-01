@@ -3,6 +3,7 @@ __date__ = 'Spring 2012'
 
 from xml_parser import XMLParser
 from uml_builder import UMLBuilder
+import sys
 
 if sys.argv:
     parser = XMLParser(sys.argv[1])
